@@ -43,9 +43,8 @@ public class UserController {
         PageHelper.startPage(page, limit);
         List<User> users = userService.selectAll();
         PageInfo<User> selectPage = new PageInfo<User>(users);
-        Map map = new HashMap();
+        Map map = new HashMap(16);
         map.put("code", "0");
-        //map.put("msg", "");
         map.put("count", selectPage.getTotal());
         map.put("data", selectPage.getList());
         return map;
@@ -76,7 +75,7 @@ public class UserController {
     public Map findById(String jsons){
         List<User> users = JsonListUtil.jsonToList(jsons, User.class);
         User user = userService.selectOne(users.get(0));
-        Map map = new HashMap();
+        Map map = new HashMap(16);
         map.put("obj", user);
         return map;
     }

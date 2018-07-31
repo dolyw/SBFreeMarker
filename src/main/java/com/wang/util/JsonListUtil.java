@@ -19,7 +19,7 @@ public class JsonListUtil {
         try {
             return JSONObject.parseObject(pojo, tclass);
         } catch (Exception e) {
-            //log.error(tclass + "转 JSON 失败");
+            System.out.println(tclass + "转JSON失败");
         }
         return null;
     }

@@ -3,6 +3,11 @@ package com.wang.entity;
 import java.util.Date;
 import javax.persistence.*;
 
+/**
+ * TODO：User
+ * @author Wang926454
+ * @date 2018/7/31 16:11
+ */
 @Table(name = "user")
 public class User {
     /**
