@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>layout 后台大布局 - Layui</title>
     <link rel="stylesheet" href="${springMacroRequestContext.contextPath}/vendor/layui/css/layui.css">
+    <style>
+        body {
+            overflow-y: scroll;
+        }
+        .layui-body {
+            overflow-y: scroll;
+        }
+    </style>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
@@ -73,9 +81,9 @@
                 <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
                 <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
                 <button class="layui-btn" data-type="isAll">验证是否全选</button>
-                <button class="layui-btn" data-type="add">添加</button>
-                <button class="layui-btn" data-type="edit">修改</button>
-                <button class="layui-btn" data-type="delete">删除</button>
+                <button class="layui-btn" id="addRow">添加</button>
+                <button class="layui-btn" id="editRow">修改</button>
+                <button class="layui-btn" id="deleteRow">删除</button>
             </div>
             <table id="demo" lay-filter="test"></table>
         </div>
@@ -111,245 +119,10 @@
     </form>
 </div>
 
-<script src="${springMacroRequestContext.contextPath}/vendor/layui/layui.js"></script>
-<script type="text/html" id="timeTpl">
-    {{ timeFormat(d.regtime) }}
-</script>
 <script>
-
-//JavaScript代码区域
-layui.use('element', function(){
-    var element = layui.element;
-});
-// Table
-var util;
-var getListUrl = '${springMacroRequestContext.contextPath}/getUsers';
-    layui.use(['table','util','layer'], function(){
-        var table = layui.table;
-        util = layui.util;
-        //第一个实例
-        table.render({
-            elem: '#demo'
-            ,cellMinWidth: 80 // 列宽自动分配
-            ,height: 'full-200' //
-            ,limits: [5, 15, 30]
-            ,limit: 15 //每页默认显示的数量
-            ,url: getListUrl //数据接口
-            ,page: true //开启分页
-            ,cols: [[ //表头
-                {type:'checkbox'}
-                ,{field: 'id', title: 'ID', align: 'center', sort: true}
-                ,{field: 'account', title: '帐号', align: 'center', sort: true}
-                ,{field: 'password', title: '密码', align: 'center', sort: true}
-                ,{field: 'username', title: '用户名', align: 'center', sort: true}
-                ,{field: 'regtime', title: '注册时间', align: 'center', sort: true, templet: '#timeTpl'}
-            ]]
-        });
-
-        //监听表格复选框选择
-        table.on('checkbox(demo)', function(obj){
-            console.log(obj)
-        });
-
-        var $ = layui.$, active = {
-            getCheckData: function(){ //获取选中数据
-                var checkStatus = table.checkStatus('demo')
-                        ,data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
-            }
-            ,getCheckLength: function(){ //获取选中数目
-        var checkStatus = table.checkStatus('demo')
-                ,data = checkStatus.data;
-        layer.msg('选中了：'+ data.length + ' 个');
-    }
-            ,isAll: function(){ //验证是否全选
-        var checkStatus = table.checkStatus('demo');
-        layer.msg(checkStatus.isAll ? '全选': '未全选')
-    },add: function(){ //添加
-                var checkStatus = table.checkStatus('demo')
-                        ,data = checkStatus.data;
-                layer.open({
-                        type: 1,
-                        title: '添加用户',
-                        area: ['400px', '300px'],
-                        shadeClose: false, //点击遮罩关闭
-                        content: $('#addOrUpdate'),
-                        btn: ['确定', '取消'],
-                        yes: function (index, layero) {
-                            //$("#addOrUpdateForm").submit();
-                            $.ajax({
-                                type: 'POST',
-                                url: '${springMacroRequestContext.contextPath}/addOrUpdate',
-                                data: $('#addOrUpdateForm').serialize(),
-                                //dataType: 'json',
-                                success: function (data) {
-                                    //layer.close(index);
-                                    //layer.closeAll();
-                                    //layer.msg('添加成功');
-                                    layer.open({
-                                        type: 1
-                                        ,content: '<div style="padding: 20px 100px;">添加成功</div>'
-                                        ,btn: '确定'
-                                        ,btnAlign: 'c' //按钮居中
-                                        ,shade: 0 //不显示遮罩
-                                        ,yes: function(){
-                                            layer.closeAll();
-                                            window.location.href = '${springMacroRequestContext.contextPath}/';
-                                        }
-                                    });
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    /*弹出jqXHR对象的信息*/
-                                    alert(jqXHR.responseText);
-                                    alert(jqXHR.status);
-                                    alert(jqXHR.readyState);
-                                    alert(jqXHR.statusText);
-                                    /*弹出其他两个参数的信息*/
-                                    alert(textStatus);
-                                    alert(errorThrown);
-                                }
-                            });
-
-
-                        }
-                    }
-                );
-            },edit: function(){ //修改
-                var checkStatus = table.checkStatus('demo')
-                        ,data = checkStatus.data;
-                if(data.length != 1){
-                    layer.msg('请选择一条数据');
-                    return;
-                }
-                layer.open({
-                        type: 1,
-                        title: '添加用户',
-                        area: ['400px', '300px'],
-                        shadeClose: false, //点击遮罩关闭
-                        content: $('#addOrUpdate'),
-                        btn: ['确定', '取消'],
-                        success: function(layero, index){
-                            $.ajax({
-                                type: 'POST',
-                                url: '${springMacroRequestContext.contextPath}/findById',
-                                data: {
-                                    jsons : JSON.stringify(data)
-                                },
-                                dataType: 'json',
-                                success: function (data) {
-                                    //layer.msg(data.obj.id);
-                                    $('#id').val(data.obj.id);
-                                    $('#account').val(data.obj.account);
-                                    $('#password').val(data.obj.password);
-                                    $('#username').val(data.obj.username);
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    /!*弹出jqXHR对象的信息*!/
-                                    alert(jqXHR.responseText);
-                                    alert(jqXHR.status);
-                                    alert(jqXHR.readyState);
-                                    alert(jqXHR.statusText);
-                                    /!*弹出其他两个参数的信息*!/
-                                    alert(textStatus);
-                                    alert(errorThrown);
-                                }
-                            });
-                            //console.log(layero, index);
-                        },
-                        yes: function (index, layero) {
-                            //$("#addOrUpdateForm").submit();
-                            $.ajax({
-                                type: 'POST',
-                                url: '${springMacroRequestContext.contextPath}/addOrUpdate',
-                                data: $('#addOrUpdateForm').serialize(),
-                                //dataType: 'json',
-                                success: function (data) {
-                                    //layer.close(index);
-                                    //layer.closeAll();
-                                    //layer.msg('添加成功');
-                                    layer.open({
-                                        type: 1
-                                        ,content: '<div style="padding: 20px 100px;">修改成功</div>'
-                                        ,btn: '确定'
-                                        ,btnAlign: 'c' //按钮居中
-                                        ,shade: 0 //不显示遮罩
-                                        ,yes: function(){
-                                            layer.closeAll();
-                                            window.location.href = '${springMacroRequestContext.contextPath}/';
-                                        }
-                                    });
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    /*弹出jqXHR对象的信息*/
-                                    alert(jqXHR.responseText);
-                                    alert(jqXHR.status);
-                                    alert(jqXHR.readyState);
-                                    alert(jqXHR.statusText);
-                                    /*弹出其他两个参数的信息*/
-                                    alert(textStatus);
-                                    alert(errorThrown);
-                                }
-                            });
-                        }
-                    }
-                );
-            },delete: function(){ //是否删除
-                var checkStatus = table.checkStatus('demo')
-                        ,data = checkStatus.data;
-                if(data.length < 1){
-                    layer.msg('请选择一条以上数据');
-                    return;
-                }
-                layer.confirm('真的删除行么', function(){
-                    //layer.alert(JSON.stringify(data));
-                    //layer.msg('删除了：'+ data.length + ' 个');
-                    $.ajax({
-                        type: 'POST',
-                        url: '${springMacroRequestContext.contextPath}/delete',
-                        data: {
-                            jsons : JSON.stringify(data)
-                        },
-                        //dataType: 'json',
-                        success: function (data) {
-                            //layer.close(index);
-                            //layer.closeAll();
-                            //layer.msg('添加成功');
-                            layer.open({
-                                type: 1
-                                ,content: '<div style="padding: 20px 100px;">删除成功</div>'
-                                ,btn: '确定'
-                                ,btnAlign: 'c' //按钮居中
-                                ,shade: 0 //不显示遮罩
-                                ,yes: function(){
-                                    layer.closeAll();
-                                    window.location.href = '${springMacroRequestContext.contextPath}/';
-                                }
-                            });
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            /*弹出jqXHR对象的信息*/
-                            alert(jqXHR.responseText);
-                            alert(jqXHR.status);
-                            alert(jqXHR.readyState);
-                            alert(jqXHR.statusText);
-                            /*弹出其他两个参数的信息*/
-                            alert(textStatus);
-                            alert(errorThrown);
-                        }
-                    });
-                });
-            }
-        };
-        $('.toolBar .layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
-        });
-    });
-
-    // 时间格式化
-    function timeFormat(t){
-        return util.toDateString(t);
-    }
+    var contextPath = "${springMacroRequestContext.contextPath}";
 </script>
+<script src="${springMacroRequestContext.contextPath}/vendor/layui/layui.js"></script>
+<script src="${springMacroRequestContext.contextPath}/js/index.js"></script>
 </body>
 </html>
