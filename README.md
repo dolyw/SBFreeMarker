@@ -2,7 +2,7 @@
 
 #### 项目介绍
 
-1. SpringBoot整合Mybatis + 分页插件PageHelper + 通用Mapper插件 + Maven集成Mybatis Geneator示例
+1. SpringBoot整合Mybatis + 分页插件PageHelper + 通用Mapper插件 + Maven集成Mybatis Generator示例
 2. FreeMarker视图
 
 #### 软件架构
