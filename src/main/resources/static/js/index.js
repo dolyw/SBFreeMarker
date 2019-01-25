@@ -1,32 +1,28 @@
 // JavaScript代码区域
-layui.use('element', function(){
-    var element = layui.element;
-});
-// Table
 var util;
-var getListUrl = contextPath + '/getUsers';
-layui.use(['table','util','layer'], function(){
+var getListUrl = contextPath + 'getUsers';
+layui.use(['table','util','layer'], function() {
     var table = layui.table;
     util = layui.util;
     // 第一个实例
     table.render({
         elem: '#demo',
-        id: 'demo'
+        id: 'demo',
         // 列宽自动分配
-        ,cellMinWidth: 80
-        ,height: 'full-200'
-        ,limits: [5, 15, 30]
-        ,limit: 15
-        ,url: getListUrl
+        cellMinWidth: 80,
+        height: 'full-200',
+        limits: [5, 15, 30],
+        limit: 15,
+        url: getListUrl,
         // 开启分页
-        ,page: true
-        ,cols: [[
-            {type:'checkbox'}
-            ,{field: 'id', title: 'ID', align: 'center', sort: true}
-            ,{field: 'account', title: '帐号', align: 'center', sort: true}
-            ,{field: 'password', title: '密码', align: 'center', sort: true}
-            ,{field: 'username', title: '用户名', align: 'center', sort: true}
-            ,{field: 'regtime', title: '注册时间', align: 'center', sort: true}
+        page: true,
+        cols: [[
+            {type:'checkbox'},
+            {field: 'id', title: 'ID', align: 'center', sort: true},
+            {field: 'account', title: '帐号', align: 'center', sort: true},
+            {field: 'password', title: '密码', align: 'center', sort: true},
+            {field: 'username', title: '用户名', align: 'center', sort: true},
+            {field: 'regtime', title: '注册时间', align: 'center', sort: true}
         ]]
     });
 
@@ -38,18 +34,16 @@ layui.use(['table','util','layer'], function(){
     var $ = layui.$, active = {
         // 获取选中数据
         getCheckData: function(){
-            var checkStatus = table.checkStatus('demo')
-                ,data = checkStatus.data;
+            var checkStatus = table.checkStatus('demo'), data = checkStatus.data;
             layer.alert(JSON.stringify(data));
-        }
+        },
         // 获取选中数目
-        ,getCheckLength: function(){
-            var checkStatus = table.checkStatus('demo')
-                ,data = checkStatus.data;
+        getCheckLength: function(){
+            var checkStatus = table.checkStatus('demo'), data = checkStatus.data;
             layer.msg('选中了：'+ data.length + ' 个');
-        }
+        },
         // 验证是否全选
-        ,isAll: function(){
+        isAll: function(){
             var checkStatus = table.checkStatus('demo');
             layer.msg(checkStatus.isAll ? '全选': '未全选')
         }
@@ -76,7 +70,7 @@ layui.use(['table','util','layer'], function(){
                 layer.close(index);
                 $.ajax({
                     type: 'POST',
-                    url: contextPath + '/addOrUpdate',
+                    url: contextPath + 'addOrUpdate',
                     data: $('#addOrUpdateForm').serialize(),
                     // dataType: 'json',
                     success: function (data) {
@@ -127,8 +121,7 @@ layui.use(['table','util','layer'], function(){
      * 修改
      */
     $("#editRow").on("click", function () {
-        var checkStatus = table.checkStatus('demo')
-            ,data = checkStatus.data;
+        var checkStatus = table.checkStatus('demo'), data = checkStatus.data;
         if(data.length != 1){
             layer.msg('请选择一条数据');
             return;
@@ -144,7 +137,7 @@ layui.use(['table','util','layer'], function(){
             success: function(layero, index){
                 $.ajax({
                     type: 'POST',
-                    url: contextPath + '/findById',
+                    url: contextPath + 'findById',
                     data: {
                         jsons : JSON.stringify(data)
                     },
@@ -173,7 +166,7 @@ layui.use(['table','util','layer'], function(){
                 layer.close(index);
                 $.ajax({
                     type: 'POST',
-                    url: contextPath + '/addOrUpdate',
+                    url: contextPath + 'addOrUpdate',
                     data: $('#addOrUpdateForm').serialize(),
                     // dataType: 'json',
                     success: function (data) {
@@ -205,8 +198,7 @@ layui.use(['table','util','layer'], function(){
      * 删除
      */
     $("#deleteRow").on("click", function () {
-        var checkStatus = table.checkStatus('demo')
-            ,data = checkStatus.data;
+        var checkStatus = table.checkStatus('demo'), data = checkStatus.data;
         if(data.length < 1){
             layer.msg('请选择一条以上数据');
             return;
@@ -216,7 +208,7 @@ layui.use(['table','util','layer'], function(){
             // layer.msg('删除了：'+ data.length + ' 个');
             $.ajax({
                 type: 'POST',
-                url: contextPath + '/delete',
+                url: contextPath + 'delete',
                 data: {
                     jsons : JSON.stringify(data)
                 },

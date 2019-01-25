@@ -120,7 +120,7 @@
 </div>
 
 <script>
-    var contextPath = "${springMacroRequestContext.contextPath}";
+    var contextPath = "${springMacroRequestContext.contextPath}" + "/";
 </script>
 <script src="${springMacroRequestContext.contextPath}/vendor/layui/layui.js"></script>
 <script src="${springMacroRequestContext.contextPath}/js/index.js"></script>
